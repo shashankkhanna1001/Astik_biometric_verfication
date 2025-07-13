@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+
+  <!-- 💅 CSS Styling -->
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: yellowgreen;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      gap: 1rem;
+    }
+
+    input[type="text"] {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #0072ff;
+      outline: none;
+    }
+
+    button {
+      padding: 0.8rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #0072ff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #005fc1;
+    }
+
+    @media (max-width: 400px) {
+      form {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 👤 Login Form -->
+  <form id="login-form">
+    <input type="text" placeholder="Enter your User ID" id="userId" required />
+    <button type="submit">Login with Passkey</button>
+  </form>
+
+  <!-- 🔐 SimpleWebAuthn -->
+  <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+  <script>
+    const form = document.getElementById('login-form');
+    const userIdField = document.getElementById('userId');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const userId = userIdField.value;
+
+      const response = await fetch('/login-challenge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+      });
+
+      const challengeResult = await response.json();
+      const { options } = challengeResult;
+
+      const authenticationResult = await SimpleWebAuthnBrowser.startAuthentication(options);
+      console.log(authenticationResult);
+
+      const verifyResponse = await fetch('/login-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, cred: authenticationResult })
+      });
+
+      const verifyResult = await verifyResponse.json();
+      if (verifyResult.success === true) {
+        alert('Login successful');
+        window.location.href = `/payment.html`;
+      } else {
+        alert('Login failed');
+      }
+    });
+  </script>
+</body>
+</html>

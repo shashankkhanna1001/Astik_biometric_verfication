@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile Page</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: yellowgreen;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .profile-container {
+      background-color: white;
+      color: black;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      min-width: 300px;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #0072ff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 1.5rem;
+    }
+
+    button:hover {
+      background-color: #005fc1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <h1>Welcome to Your Profile</h1>
+    <button id="register-passkey-button">Register Fingerprint</button>
+  </div>
+
+  <a href="/shop.html">Enter the shop Page</a>
+
+  <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+  <script>
+    const registerPasskeyBtn = document.getElementById('register-passkey-button');
+
+    registerPasskeyBtn.addEventListener('click', async () => {
+      const url = new URL(window.location);
+      const userId = url.searchParams.get('userId');
+
+      if (!userId) {
+        alert("User ID missing in URL");
+        return;
+      }
+
+      const response = await fetch('/register-challenge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+      });
+
+      const challengeResult = await response.json();
+      const { options } = challengeResult;
+
+      const registrationResult = await SimpleWebAuthnBrowser.startRegistration(options);
+      console.log(registrationResult);
+
+      await fetch('/register-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, cred: registrationResult })
+      });
+    });
+  </script>
+</body>
+</html>

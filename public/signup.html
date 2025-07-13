@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: yellowgreen;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      gap: 1rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #0072ff;
+      outline: none;
+    }
+
+    button {
+      padding: 0.8rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #0072ff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #005fc1;
+    }
+
+    @media (max-width: 400px) {
+      form {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create Your Account</h1>
+
+  <form id="register-form">
+    <input type="text" placeholder="Username" id="username" required />
+    <input type="password" placeholder="Password" id="password" required />
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('register-form');
+
+    const usernameField = document.getElementById('username')
+    const passwordField = document.getElementById('password')
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault()
+
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                username: usernameField.value, 
+                password: passwordField.value
+            })
+        })
+
+        const result = await response.json();
+        const { id } = result
+
+        window.location.replace(`http://localhost:3000/profile.html?userId=${id}`)
+    })
+  </script>
+</body>
+</html>

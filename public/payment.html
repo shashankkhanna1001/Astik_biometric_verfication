@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment - Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: yellowgreen;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .payment-content {
+            padding: 40px;
+        }
+
+        .order-summary {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4f46e5;
+        }
+
+        .order-summary h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #4f46e5;
+        }
+
+        .payment-methods {
+            margin-bottom: 30px;
+        }
+
+        .payment-methods h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .payment-option {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-option:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+        }
+
+        .payment-option.selected {
+            border-color: #4f46e5;
+            background: #f0f4ff;
+        }
+
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .payment-option-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .payment-option-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .payment-form {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 25px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .digital-wallets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .wallet-btn {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .wallet-btn:hover {
+            border-color: #4f46e5;
+            background: #f0f4ff;
+            transform: translateY(-1px);
+        }
+
+        .wallet-btn.paypal {
+            color: #0070ba;
+        }
+
+        .wallet-btn.apple {
+            color: #000;
+        }
+
+        .wallet-btn.google {
+            color: #4285f4;
+        }
+
+        .wallet-btn.amazon {
+            color: #ff9900;
+        }
+
+        .security-info {
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .security-info h4 {
+            color: #047857;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-info p {
+            color: #065f46;
+            font-size: 14px;
+        }
+
+        .payment-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .payment-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .payment-button:active {
+            transform: translateY(0);
+        }
+
+        .alternative-methods {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .alternative-methods h4 {
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .alt-method {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .alt-method:hover {
+            background: #f8fafc;
+            border-color: #4f46e5;
+        }
+
+        .alt-method-icon {
+            font-size: 24px;
+        }
+
+        .alt-method-info {
+            flex: 1;
+        }
+
+        .alt-method-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .alt-method-desc {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .payment-content {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .digital-wallets {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Complete Payment</h1>
+            <p>Secure checkout with multiple payment options</p>
+        </div>
+
+        <div class="payment-content">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3>📋 Order Summary</h3>
+                <div class="order-item">
+                    <span>Premium Subscription (1 year)</span>
+                    <span>$99.99</span>
+                </div>
+                <div class="order-item">
+                    <span>Tax</span>
+                    <span>$8.00</span>
+                </div>
+                <div class="order-item">
+                    <span>Discount (SAVE20)</span>
+                    <span>-$20.00</span>
+                </div>
+                <div class="order-item">
+                    <span>Total Amount</span>
+                    <span>$87.99</span>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <h3>💳 Choose Payment Method</h3>
+                
+                <div class="payment-options">
+                    <div class="payment-option selected">
+                        <input type="radio" name="payment_method" value="card" checked>
+                        <span class="payment-option-icon">💳</span>
+                        <div class="payment-option-name">Credit/Debit Card</div>
+                    </div>
+                    
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="paypal">
+                        <span class="payment-option-icon">🅿️</span>
+                        <div class="payment-option-name">PayPal</div>
+                    </div>
+                    
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="apple">
+                        <span class="payment-option-icon">🍎</span>
+                        <div class="payment-option-name">Apple Pay</div>
+                    </div>
+                    
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="google">
+                        <span class="payment-option-icon">🟢</span>
+                        <div class="payment-option-name">Google Pay</div>
+                    </div>
+                </div>
+
+                <!-- Digital Wallet Buttons -->
+                <div class="digital-wallets">
+                    <button class="wallet-btn paypal">
+                        <span>🅿️</span> PayPal
+                    </button>
+                    <button class="wallet-btn apple">
+                        <span>🍎</span> Apple Pay
+                    </button>
+                    <button class="wallet-btn google">
+                        <span>🟢</span> Google Pay
+                    </button>
+                    <button class="wallet-btn amazon">
+                        <span>📦</span> Amazon Pay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Payment Form -->
+            <div class="payment-form" id="card-form">
+                <h3>💳 Card Information</h3>
+                
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                    <div class="card-icons">
+                        <div class="card-icon">VISA</div>
+                        <div class="card-icon">MC</div>
+                        <div class="card-icon">AMEX</div>
+                        <div class="card-icon">DISC</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expiry">Expiry Date</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardholder">Cardholder Name</label>
+                    <input type="text" id="cardholder" placeholder="John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country">
+                        <option value="">Select Country</option>
+                        <option value="US">United States</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="IN">India</option>
+                        <option value="JP">Japan</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zip">ZIP/Postal Code</label>
+                        <input type="text" id="zip" placeholder="12345">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" placeholder="New York">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Info -->
+            <div class="security-info">
+                <h4>🔒 Secure Payment</h4>
+                <p>Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data. Payment ID: PAY-2024-#{Math.floor(Math.random() * 1000000)}</p>
+            </div>
+
+            <!-- Payment Button -->
+            <button class="payment-button" onclick="processPayment()">
+                🔒 Pay $87.99 Securely
+            </button>
+
+            <!-- Alternative Payment Methods -->
+            <div class="alternative-methods">
+                <h4>🏦 Alternative Payment Methods</h4>
+                
+                <div class="alt-method">
+                    <div class="alt-method-icon">🏦</div>
+                    <div class="alt-method-info">
+                        <div class="alt-method-name">Bank Transfer</div>
+                        <div class="alt-method-desc">Direct bank transfer - Account: 1234567890</div>
+                    </div>
+                </div>
+                
+                <div class="alt-method">
+                    <div class="alt-method-icon">💰</div>
+                    <div class="alt-method-info">
+                        <div class="alt-method-name">Cryptocurrency</div>
+                        <div class="alt-method-desc">Bitcoin, Ethereum, USDC accepted</div>
+                    </div>
+                </div>
+                
+                <div class="alt-method">
+                    <div class="alt-method-icon">📱</div>
+                    <div class="alt-method-info">
+                        <div class="alt-method-name">Mobile Payment</div>
+                        <div class="alt-method-desc">Venmo, Zelle, Cash App - ID: @merchant123</div>
+                    </div>
+                </div>
+                
+                <div class="alt-method">
+                    <div class="alt-method-icon">💳</div>
+                    <div class="alt-method-info">
+                        <div class="alt-method-name">Buy Now, Pay Later</div>
+                        <div class="alt-method-desc">Klarna, Afterpay, Sezzle - Split into 4 payments</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Payment method selection
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // Card number formatting
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
+            if (formattedValue.length > 19) formattedValue = formattedValue.substring(0, 19);
+            e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVV validation
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Process payment function
+        function processPayment() {
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            const transactionId = 'TXN-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            
+            // Simulate payment processing
+            const button = document.querySelector('.payment-button');
+            button.innerHTML = '⏳ Processing Payment...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert(`✅ Payment Successful!\n\nTransaction ID: ${transactionId}\nPayment Method: ${paymentMethod.toUpperCase()}\nAmount: $87.99\n\nThank you for your purchase!`);
+                button.innerHTML = '✅ Payment Complete';
+                button.style.background = '#10b981';
+            }, 2000);
+        }
+
+        // Wallet button handlers
+        document.querySelectorAll('.wallet-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const method = this.textContent.trim();
+                alert(`Redirecting to ${method} for secure payment...`);
+            });
+        });
+
+        // Alternative method handlers
+        document.querySelectorAll('.alt-method').forEach(method => {
+            method.addEventListener('click', function() {
+                const methodName = this.querySelector('.alt-method-name').textContent;
+                alert(`Selected: ${methodName}\nPlease follow the instructions provided for this payment method.`);
+            });
+        });
+    </script>
+</body>
+</html>
