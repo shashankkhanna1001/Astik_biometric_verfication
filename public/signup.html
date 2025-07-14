@@ -3,40 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup</title>
+  <title>Astik Biometric Verification</title>
+
+  <!-- Hindi Font Support -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, yellowgreen, #7fbf4d);
+      --form-bg: rgba(255, 255, 255, 0.9);
+      --text-color: #000;
+      --btn-bg: #0072ff;
+      --btn-hover: #005fc1;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      --form-bg: rgba(43, 43, 43, 0.95);
+      --text-color: #fff;
+      --btn-bg: #00aaff;
+      --btn-hover: #007acc;
+    }
+
     * {
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      background: yellowgreen;
+      background: url('background.jpg') center/cover no-repeat fixed, var(--bg-gradient);
+      color: var(--text-color);
       height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      transition: background 0.4s ease;
     }
 
     h1 {
-      color: white;
-      font-size: 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      text-align: center;
     }
 
     form {
-      background-color: #fff;
+      background-color: var(--form-bg);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
       display: flex;
       flex-direction: column;
-      min-width: 300px;
-      gap: 1rem;
+      width: 100%;
+      max-width: 360px;
+      gap: 1.2rem;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
     input[type="text"],
@@ -46,70 +75,210 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       transition: border-color 0.3s;
+      width: 100%;
     }
 
     input:focus {
-      border-color: #0072ff;
+      border-color: var(--btn-bg);
       outline: none;
     }
 
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: #888;
+    }
+
     button {
-      padding: 0.8rem;
+      padding: 0.9rem;
       font-size: 1rem;
       color: #fff;
-      background-color: #0072ff;
+      background-color: var(--btn-bg);
       border: none;
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s;
     }
 
-    button:hover {
-      background-color: #005fc1;
+    button:hover:not(:disabled) {
+      background-color: var(--btn-hover);
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    #spinner {
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .theme-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      color: white;
+      border: 2px solid white;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     @media (max-width: 400px) {
       form {
         width: 90%;
+        padding: 1.5rem;
+      }
+
+      .theme-controls {
+        flex-direction: column;
+        gap: 0.3rem;
+        right: 0.5rem;
+        top: 0.5rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <h1>Create Your Account</h1>
+  <!-- Top-right language + theme toggle buttons -->
+  <div class="theme-controls">
+    <button class="theme-toggle" id="toggleLang">हिंदी</button>
+    <button class="theme-toggle" id="toggleTheme">🌙 Dark Mode</button>
+  </div>
+
+  <h1>Astik Biometric Verification</h1>
 
   <form id="register-form">
-    <input type="text" placeholder="Username" id="username" required />
-    <input type="password" placeholder="Password" id="password" required />
-    <button type="submit">Register</button>
+    <label for="username">Username</label>
+    <input type="text" placeholder="Enter username" id="username" required />
+
+    <label for="password">Password</label>
+    <div class="password-wrapper">
+      <input type="password" placeholder="Enter password" id="password" required />
+      <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+    </div>
+
+    <button type="submit" id="register-btn">Register</button>
+    <div id="spinner">⏳ Creating account...</div>
   </form>
 
   <script>
     const form = document.getElementById('register-form');
-
-    const usernameField = document.getElementById('username')
-    const passwordField = document.getElementById('password')
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+    const registerBtn = document.getElementById('register-btn');
+    const spinner = document.getElementById('spinner');
 
     form.addEventListener('submit', async e => {
-        e.preventDefault()
+      e.preventDefault();
+      registerBtn.disabled = true;
+      spinner.style.display = 'block';
 
+      try {
         const response = await fetch('/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                username: usernameField.value, 
-                password: passwordField.value
-            })
-        })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: usernameField.value,
+            password: passwordField.value
+          })
+        });
 
         const result = await response.json();
-        const { id } = result
+        if (result.id) {
+          window.location.replace(`/profile.html?userId=${result.id}`);
+        } else {
+          alert(currentLang === 'hi' ? 'साइनअप असफल रहा' : 'Signup failed');
+        }
+      } catch (err) {
+        console.error(err);
+        alert(currentLang === 'hi' ? 'कुछ गलत हो गया। कृपया पुनः प्रयास करें।' : 'Something went wrong. Please try again.');
+      } finally {
+        registerBtn.disabled = false;
+        spinner.style.display = 'none';
+      }
+    });
 
-        window.location.replace(`http://localhost:3000/profile.html?userId=${id}`)
-    })
+    function togglePassword() {
+      const pass = document.getElementById('password');
+      pass.type = pass.type === 'password' ? 'text' : 'password';
+    }
+
+    // 🌙 Theme Toggle
+    const toggleBtn = document.getElementById('toggleTheme');
+    function applyTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      toggleBtn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('theme', theme);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.body.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(newTheme);
+    });
+
+    applyTheme(localStorage.getItem('theme') || 'light');
+
+    // 🌐 Language Toggle
+    const langBtn = document.getElementById('toggleLang');
+    let currentLang = localStorage.getItem('lang') || 'en';
+    applyLang(currentLang);
+
+    langBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'en' ? 'hi' : 'en';
+      localStorage.setItem('lang', currentLang);
+      applyLang(currentLang);
+    });
+
+    function applyLang(lang) {
+      if (lang === 'hi') {
+        langBtn.textContent = 'EN';
+        document.querySelector('h1').textContent = 'आस्तिक बायोमेट्रिक सत्यापन';
+        document.querySelector('label[for="username"]').textContent = 'उपयोगकर्ता नाम';
+        document.querySelector('label[for="password"]').textContent = 'पासवर्ड';
+        usernameField.placeholder = 'उपयोगकर्ता नाम दर्ज करें';
+        passwordField.placeholder = 'पासवर्ड दर्ज करें';
+        registerBtn.textContent = 'पंजीकरण करें';
+        spinner.textContent = '⏳ खाता बनाया जा रहा है...';
+        document.body.style.fontFamily = `'Noto Sans Devanagari', sans-serif`;
+      } else {
+        langBtn.textContent = 'हिंदी';
+        document.querySelector('h1').textContent = 'Astik Biometric Verification';
+        document.querySelector('label[for="username"]').textContent = 'Username';
+        document.querySelector('label[for="password"]').textContent = 'Password';
+        usernameField.placeholder = 'Enter username';
+        passwordField.placeholder = 'Enter password';
+        registerBtn.textContent = 'Register';
+        spinner.textContent = '⏳ Creating account...';
+        document.body.style.fontFamily = `'Segoe UI', sans-serif`;
+      }
+    }
   </script>
 </body>
 </html>

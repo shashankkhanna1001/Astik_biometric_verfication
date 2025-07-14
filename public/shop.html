@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechStore - Modern E-commerce</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --accent: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --accent: #f87171;
+            --background: #1e293b;
+            --card-bg: #2d3748;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #4b5563;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,180 +35,204 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: yellowgreen;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
             min-height: 100vh;
-            color: #333;
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2rem 1rem;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 1rem;
+            z-index: 10;
+            transition: background 0.3s ease;
         }
 
         .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
         }
 
         .nav-menu {
             display: flex;
-            gap: 30px;
+            gap: 2rem;
             list-style: none;
         }
 
         .nav-menu li a {
             text-decoration: none;
-            color: #333;
+            color: var(--text);
             font-weight: 500;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
         }
 
         .nav-menu li a:hover {
-            color: #667eea;
+            color: var(--primary);
         }
 
         .cart-icon {
             position: relative;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
             cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .cart-icon:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .cart-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #ff4757;
+            top: -0.5rem;
+            right: -0.5rem;
+            background: var(--accent);
             color: white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 1.5rem;
+            height: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border);
         }
 
         .search-bar {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
         }
 
         .search-input {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.3s;
+            background: var(--card-bg);
+            color: var(--text);
+            transition: all 0.3s ease;
         }
 
         .search-input:focus {
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .product-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: 1rem;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
             width: 100%;
-            height: 200px;
-            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #6c757d;
+            height: 180px;
+            object-fit: cover;
+            display: block;
         }
 
         .product-info {
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .product-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
         .product-description {
-            color: #666;
-            margin-bottom: 15px;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
             line-height: 1.5;
         }
 
         .product-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 15px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
         .add-to-cart {
             width: 100%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
         }
 
         .add-to-cart:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .cart-modal {
@@ -194,8 +241,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -203,164 +250,193 @@
         }
 
         .cart-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 32rem;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
+            animation: slideIn 0.3s ease-out;
+            transition: background 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .cart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
         }
 
         .cart-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #333;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .close-cart {
             background: none;
             border: none;
-            font-size: 2rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #666;
-            padding: 5px;
+            color: var(--text-light);
+            padding: 0.25rem;
             border-radius: 50%;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
         .close-cart:hover {
-            background-color: #f0f0f0;
+            background: var(--border);
         }
 
         .cart-item {
             display: flex;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
         .cart-item-info {
             flex: 1;
-            margin-left: 15px;
+            margin-left: 1rem;
         }
 
         .cart-item-title {
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
         .cart-item-price {
-            color: #667eea;
-            font-weight: bold;
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .quantity-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 10px 0;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
         }
 
         .quantity-btn {
-            background: #667eea;
+            background: var(--primary);
             color: white;
             border: none;
-            width: 30px;
-            height: 30px;
+            width: 2rem;
+            height: 2rem;
             border-radius: 50%;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
 
         .quantity-btn:hover {
-            background: #5a6fd8;
+            background: #4338ca;
         }
 
         .quantity {
-            font-weight: bold;
-            min-width: 20px;
+            font-weight: 600;
+            min-width: 1.5rem;
             text-align: center;
         }
 
         .remove-item {
-            background: #ff4757;
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
 
         .remove-item:hover {
-            background: #ff3838;
+            background: #dc2626;
         }
 
         .cart-total {
             text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
         }
 
         .total-amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
         }
 
         .checkout-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
         }
 
         .checkout-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .empty-cart {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            padding: 2rem;
+            color: var(--text-light);
         }
 
         .empty-cart-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
-                gap: 20px;
+                gap: 1rem;
+                padding: 1rem;
             }
 
             .nav-menu {
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 1rem;
             }
 
             .product-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .cart-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .cart-icon {
+                padding: 0.5rem 1rem;
             }
         }
     </style>
@@ -377,9 +453,12 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
-            <div class="cart-icon" onclick="toggleCart()">
-                🛒 Cart
-                <span class="cart-count" id="cartCount">0</span>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                <div class="cart-icon" onclick="toggleCart()">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
             </div>
         </header>
 
@@ -410,63 +489,63 @@
     </div>
 
     <script>
-        // Sample product data
+        // Sample product data with image URLs
         const products = [
             {
                 id: 1,
                 name: "Premium Wireless Headphones",
                 description: "High-quality wireless headphones with noise cancellation and 30-hour battery life.",
                 price: 199.99,
-                image: "🎧"
+                image: "https://images.unsplash.com/photo-1505740106531-4243f3831145?w=500"
             },
             {
                 id: 2,
                 name: "Smart Watch Pro",
                 description: "Advanced fitness tracking, heart rate monitoring, and smartphone integration.",
                 price: 349.99,
-                image: "⌚"
+                image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500"
             },
             {
                 id: 3,
                 name: "Bluetooth Speaker",
                 description: "Portable wireless speaker with 360° sound and waterproof design.",
                 price: 79.99,
-                image: "🔊"
+                image: "https://images.unsplash.com/photo-1605649487212-47bdab664137?w=500"
             },
             {
                 id: 4,
                 name: "Laptop Stand",
                 description: "Ergonomic aluminum laptop stand with adjustable height and angle.",
                 price: 49.99,
-                image: "💻"
+                image: "https://images.unsplash.com/photo-1629654297299-c81457842e09?w=500"
             },
             {
                 id: 5,
                 name: "Wireless Mouse",
                 description: "Precision wireless mouse with ergonomic design and long battery life.",
                 price: 29.99,
-                image: "🖱️"
+                image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500"
             },
             {
                 id: 6,
                 name: "USB-C Hub",
                 description: "Multi-port USB-C hub with HDMI, USB 3.0, and SD card reader.",
                 price: 59.99,
-                image: "🔌"
+                image: "https://images.unsplash.com/photo-1629654341344-1b7b1a6dd0f5?w=500"
             },
             {
                 id: 7,
                 name: "Webcam HD",
                 description: "1080p HD webcam with auto-focus and built-in microphone.",
                 price: 89.99,
-                image: "📷"
+                image: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=500"
             },
             {
                 id: 8,
                 name: "Phone Case",
                 description: "Protective phone case with military-grade drop protection.",
                 price: 24.99,
-                image: "📱"
+                image: "https://images.unsplash.com/photo-1624064493467-4c6a69e6e1bd?w=500"
             }
         ];
 
@@ -477,6 +556,30 @@
         function init() {
             displayProducts();
             updateCartCount();
+            loadTheme();
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcon();
+        }
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon();
+        }
+
+        // Update theme toggle icon
+        function updateThemeToggleIcon() {
+            const themeToggle = document.querySelector('.theme-toggle');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
         }
 
         // Display products
@@ -488,7 +591,7 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-description">${product.description}</p>
@@ -565,7 +668,7 @@
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
-                    <div class="product-image" style="width: 60px; height: 60px; font-size: 1.5rem;">${item.image}</div>
+                    <img src="${item.image}" alt="${item.name}" class="product-image" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="cart-item-info">
                         <div class="cart-item-title">${item.name}</div>
                         <div class="cart-item-price">$${item.price}</div>

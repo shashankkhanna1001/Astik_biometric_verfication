@@ -3,8 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Payment - Checkout</title>
+    <title data-en="Complete Payment - Checkout" data-hi="भुगतान पूरा करें - चेकआउट">Complete Payment - Checkout</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --accent: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --security-bg: #ecfdf5;
+            --security-border: #d1fae5;
+            --security-text: #065f46;
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --accent: #f87171;
+            --background: #1e293b;
+            --card-bg: #2d3748;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #4b5563;
+            --success: #34d399;
+            --security-bg: #064e3b;
+            --security-border: #047857;
+            --security-text: #a7f3d0;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,26 +43,30 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: yellowgreen;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background: white;
+            background: var(--card-bg);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
+            transition: background 0.3s ease;
         }
 
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
@@ -45,20 +80,44 @@
             opacity: 0.9;
         }
 
+        .header-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-toggle, .lang-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover, .lang-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         .payment-content {
             padding: 40px;
         }
 
         .order-summary {
-            background: #f8fafc;
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
-            border-left: 4px solid #4f46e5;
+            border-left: 4px solid var(--primary);
+            transition: background 0.3s ease;
         }
 
         .order-summary h3 {
-            color: #1e293b;
+            color: var(--text);
             margin-bottom: 15px;
             font-size: 1.3em;
         }
@@ -68,14 +127,14 @@
             justify-content: space-between;
             margin-bottom: 10px;
             padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border);
         }
 
         .order-item:last-child {
             border-bottom: none;
             font-weight: bold;
             font-size: 1.1em;
-            color: #4f46e5;
+            color: var(--primary);
         }
 
         .payment-methods {
@@ -83,7 +142,7 @@
         }
 
         .payment-methods h3 {
-            color: #1e293b;
+            color: var(--text);
             margin-bottom: 20px;
             font-size: 1.3em;
         }
@@ -97,23 +156,24 @@
 
         .payment-option {
             padding: 15px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
             position: relative;
+            background: var(--card-bg);
         }
 
         .payment-option:hover {
-            border-color: #4f46e5;
+            border-color: var(--primary);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
         }
 
         .payment-option.selected {
-            border-color: #4f46e5;
-            background: #f0f4ff;
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
         }
 
         .payment-option input[type="radio"] {
@@ -129,14 +189,15 @@
 
         .payment-option-name {
             font-weight: 600;
-            color: #1e293b;
+            color: var(--text);
         }
 
         .payment-form {
-            background: #f8fafc;
+            background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
+            transition: background 0.3s ease;
         }
 
         .form-group {
@@ -153,23 +214,25 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #374151;
+            color: var(--text);
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #4f46e5;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
@@ -182,14 +245,14 @@
         .card-icon {
             width: 40px;
             height: 25px;
-            background: #f1f5f9;
+            background: var(--border);
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             font-weight: bold;
-            color: #64748b;
+            color: var(--text-light);
         }
 
         .digital-wallets {
@@ -201,9 +264,9 @@
 
         .wallet-btn {
             padding: 15px 20px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             border-radius: 10px;
-            background: white;
+            background: var(--card-bg);
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -211,11 +274,12 @@
             justify-content: center;
             gap: 10px;
             font-weight: 600;
+            color: var(--text);
         }
 
         .wallet-btn:hover {
-            border-color: #4f46e5;
-            background: #f0f4ff;
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
             transform: translateY(-1px);
         }
 
@@ -236,15 +300,15 @@
         }
 
         .security-info {
-            background: #ecfdf5;
-            border: 1px solid #d1fae5;
+            background: var(--security-bg);
+            border: 1px solid var(--security-border);
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 30px;
         }
 
         .security-info h4 {
-            color: #047857;
+            color: var(--security-text);
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -252,14 +316,14 @@
         }
 
         .security-info p {
-            color: #065f46;
+            color: var(--security-text);
             font-size: 14px;
         }
 
         .payment-button {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -280,14 +344,18 @@
             transform: translateY(0);
         }
 
+        .payment-button.success {
+            background: var(--success);
+        }
+
         .alternative-methods {
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border);
         }
 
         .alternative-methods h4 {
-            color: #1e293b;
+            color: var(--text);
             margin-bottom: 15px;
         }
 
@@ -296,16 +364,17 @@
             align-items: center;
             gap: 15px;
             padding: 15px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             border-radius: 8px;
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: var(--card-bg);
         }
 
         .alt-method:hover {
-            background: #f8fafc;
-            border-color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
         }
 
         .alt-method-icon {
@@ -318,12 +387,12 @@
 
         .alt-method-name {
             font-weight: 600;
-            color: #1e293b;
+            color: var(--text);
         }
 
         .alt-method-desc {
             font-size: 14px;
-            color: #64748b;
+            color: var(--text-light);
         }
 
         @media (max-width: 768px) {
@@ -348,85 +417,89 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛒 Complete Payment</h1>
-            <p>Secure checkout with multiple payment options</p>
+            <h1 data-en="🛒 Complete Payment" data-hi="🛒 भुगतान पूरा करें">🛒 Complete Payment</h1>
+            <p data-en="Secure checkout with multiple payment options" data-hi="एकाधिक भुगतान विकल्पों के साथ सुरक्षित चेकआउट">Secure checkout with multiple payment options</p>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                <button class="lang-toggle" onclick="toggleLanguage()">🇮🇳</button>
+            </div>
         </div>
 
         <div class="payment-content">
             <!-- Order Summary -->
             <div class="order-summary">
-                <h3>📋 Order Summary</h3>
+                <h3 data-en="📋 Order Summary" data-hi="📋 ऑर्डर सारांश">📋 Order Summary</h3>
                 <div class="order-item">
-                    <span>Premium Subscription (1 year)</span>
+                    <span data-en="Total Amount" data-hi="प्रीमियम सदस्यता (1 वर्ष)">Premium Subscription (1 year)</span>
                     <span>$99.99</span>
                 </div>
                 <div class="order-item">
-                    <span>Tax</span>
+                    <span data-en="Tax" data-hi="कर">Tax</span>
                     <span>$8.00</span>
                 </div>
                 <div class="order-item">
-                    <span>Discount (SAVE20)</span>
+                    <span data-en="Discount (SAVE20)" data-hi="छूट (SAVE20)">Discount (SAVE20)</span>
                     <span>-$20.00</span>
                 </div>
                 <div class="order-item">
-                    <span>Total Amount</span>
+                    <span data-en="Total Amount" data-hi="कुल राशि">Total Amount</span>
                     <span>$87.99</span>
                 </div>
             </div>
 
             <!-- Payment Methods -->
             <div class="payment-methods">
-                <h3>💳 Choose Payment Method</h3>
+                <h3 data-en="💳 Choose Payment Method" data-hi="💳 भुगतान विधि चुनें">💳 Choose Payment Method</h3>
                 
                 <div class="payment-options">
                     <div class="payment-option selected">
                         <input type="radio" name="payment_method" value="card" checked>
                         <span class="payment-option-icon">💳</span>
-                        <div class="payment-option-name">Credit/Debit Card</div>
+                        <div class="payment-option-name" data-en="Credit/Debit Card" data-hi="क्रेडिट/डेबिट कार्ड">Credit/Debit Card</div>
                     </div>
                     
                     <div class="payment-option">
                         <input type="radio" name="payment_method" value="paypal">
                         <span class="payment-option-icon">🅿️</span>
-                        <div class="payment-option-name">PayPal</div>
+                        <div class="payment-option-name" data-en="PayPal" data-hi="पेपैल">PayPal</div>
                     </div>
                     
                     <div class="payment-option">
                         <input type="radio" name="payment_method" value="apple">
                         <span class="payment-option-icon">🍎</span>
-                        <div class="payment-option-name">Apple Pay</div>
+                        <div class="payment-option-name" data-en="Apple Pay" data-hi="एप्पल पे">Apple Pay</div>
                     </div>
                     
                     <div class="payment-option">
                         <input type="radio" name="payment_method" value="google">
                         <span class="payment-option-icon">🟢</span>
-                        <div class="payment-option-name">Google Pay</div>
+                        <div class="payment-option-name" data-en="Google Pay" data-hi="गूगल पे">Google Pay</div>
                     </div>
                 </div>
 
                 <!-- Digital Wallet Buttons -->
                 <div class="digital-wallets">
                     <button class="wallet-btn paypal">
-                        <span>🅿️</span> PayPal
+                        <span>🅿️</span> <span data-en="PayPal" data-hi="पेपैल">PayPal</span>
                     </button>
                     <button class="wallet-btn apple">
-                        <span>🍎</span> Apple Pay
+                        <span>🍎</span> <span data-en="Apple Pay" data-hi="एप्पल पे">Apple Pay</span>
                     </button>
                     <button class="wallet-btn google">
-                        <span>🟢</span> Google Pay
+                        <span>🟢</span> <span data-en="Google Pay" data-hi="गूगल पे">Google Pay</span>
                     </button>
                     <button class="wallet-btn amazon">
-                        <span>📦</span> Amazon Pay
+                        <span>📦</span> <span data-en="Amazon Pay" data-hi="अमेज़न पे">Amazon Pay</span>
                     </button>
                 </div>
             </div>
 
             <!-- Card Payment Form -->
             <div class="payment-form" id="card-form">
-                <h3>💳 Card Information</h3>
+                <h3 data-en="💳 Card Information" data-hi="💳 कार्ड जानकारी">💳 Card Information</h3>
                 
                 <div class="form-group">
-                    <label for="card-number">Card Number</label>
+                    <label for="card-number" data-en="Card Number" data-hi="कार्ड नंबर">Card Number</label>
                     <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
                     <div class="card-icons">
                         <div class="card-icon">VISA</div>
@@ -438,42 +511,42 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="expiry">Expiry Date</label>
+                        <label for="expiry" data-en="Expiry Date" data-hi="समाप्ति तिथि">Expiry Date</label>
                         <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
                     </div>
                     <div class="form-group">
-                        <label for="cvv">CVV</label>
+                        <label for="cvv" data-en="CVV" data-hi="सीवीवी">CVV</label>
                         <input type="text" id="cvv" placeholder="123" maxlength="4">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="cardholder">Cardholder Name</label>
+                    <label for="cardholder" data-en="Cardholder Name" data-hi="कार्डधारक का नाम">Cardholder Name</label>
                     <input type="text" id="cardholder" placeholder="John Doe">
                 </div>
 
                 <div class="form-group">
-                    <label for="country">Country</label>
+                    <label for="country" data-en="Country" data-hi="देश">Country</label>
                     <select id="country">
-                        <option value="">Select Country</option>
-                        <option value="US">United States</option>
-                        <option value="GB">United Kingdom</option>
-                        <option value="CA">Canada</option>
-                        <option value="AU">Australia</option>
-                        <option value="DE">Germany</option>
-                        <option value="FR">France</option>
-                        <option value="IN">India</option>
-                        <option value="JP">Japan</option>
+                        <option value="" data-en="Select Country" data-hi="देश चुनें">Select Country</option>
+                        <option value="US" data-en="United States" data-hi="संयुक्त राज्य">United States</option>
+                        <option value="GB" data-en="United Kingdom" data-hi="यूनाइटेड किंगडम">United Kingdom</option>
+                        <option value="CA" data-en="Canada" data-hi="कनाडा">Canada</option>
+                        <option value="AU" data-en="Australia" data-hi="ऑस्ट्रेलिया">Australia</option>
+                        <option value="DE" data-en="Germany" data-hi="जर्मनी">Germany</option>
+                        <option value="FR" data-en="France" data-hi="फ्रांस">France</option>
+                        <option value="IN" data-en="India" data-hi="भारत">India</option>
+                        <option value="JP" data-en="Japan" data-hi="जापान">Japan</option>
                     </select>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="zip">ZIP/Postal Code</label>
+                        <label for="zip" data-en="ZIP/Postal Code" data-hi="ज़िप/पोस्टल कोड">ZIP/Postal Code</label>
                         <input type="text" id="zip" placeholder="12345">
                     </div>
                     <div class="form-group">
-                        <label for="city">City</label>
+                        <label for="city" data-en="City" data-hi="शहर">City</label>
                         <input type="text" id="city" placeholder="New York">
                     </div>
                 </div>
@@ -481,48 +554,46 @@
 
             <!-- Security Info -->
             <div class="security-info">
-                <h4>🔒 Secure Payment</h4>
-                <p>Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data. Payment ID: PAY-2024-#{Math.floor(Math.random() * 1000000)}</p>
+                <h4 data-en="🔒 Secure Payment" data-hi="🔒 सुरक्षित भुगतान">🔒 Secure Payment</h4>
+                <p data-en="Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data. Payment ID: PAY-2024-#{Math.floor(Math.random() * 1000000)}" data-hi="आपकी भुगतान जानकारी एन्क्रिप्टेड और सुरक्षित है। हम आपके डेटा की सुरक्षा के लिए उद्योग-मानक SSL एन्क्रिप्शन का उपयोग करते हैं। भुगतान ID: PAY-2024-#{Math.floor(Math.random() * 1000000)}">Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data. Payment ID: PAY-2024-#{Math.floor(Math.random() * 1000000)}</p>
             </div>
 
             <!-- Payment Button -->
-            <button class="payment-button" onclick="processPayment()">
-                🔒 Pay $87.99 Securely
-            </button>
+            <button class="payment-button" onclick="processPayment()" data-en="🔒 Pay $87.99 Securely" data-hi="🔒 $87.99 सुरक्षित रूप से भुगतान करें">🔒 Pay $87.99 Securely</button>
 
             <!-- Alternative Payment Methods -->
             <div class="alternative-methods">
-                <h4>🏦 Alternative Payment Methods</h4>
+                <h4 data-en="🏦 Alternative Payment Methods" data-hi="🏦 वैकल्पिक भुगतान विधियाँ">🏦 Alternative Payment Methods</h4>
                 
                 <div class="alt-method">
                     <div class="alt-method-icon">🏦</div>
                     <div class="alt-method-info">
-                        <div class="alt-method-name">Bank Transfer</div>
-                        <div class="alt-method-desc">Direct bank transfer - Account: 1234567890</div>
+                        <div class="alt-method-name" data-en="Bank Transfer" data-hi="बैंक हस्तांतरण">Bank Transfer</div>
+                        <div class="alt-method-desc" data-en="Direct bank transfer - Account: 1234567890" data-hi="प्रत्यक्ष बैंक हस्तांतरण - खाता: 1234567890">Direct bank transfer - Account: 1234567890</div>
                     </div>
                 </div>
                 
                 <div class="alt-method">
                     <div class="alt-method-icon">💰</div>
                     <div class="alt-method-info">
-                        <div class="alt-method-name">Cryptocurrency</div>
-                        <div class="alt-method-desc">Bitcoin, Ethereum, USDC accepted</div>
+                        <div class="alt-method-name" data-en="Cryptocurrency" data-hi="क्रिप्टोकरेंसी">Cryptocurrency</div>
+                        <div class="alt-method-desc" data-en="Bitcoin, Ethereum, USDC accepted" data-hi="बिटकॉइन, एथेरियम, USDC स्वीकार किए जाते हैं">Bitcoin, Ethereum, USDC accepted</div>
                     </div>
                 </div>
                 
                 <div class="alt-method">
                     <div class="alt-method-icon">📱</div>
                     <div class="alt-method-info">
-                        <div class="alt-method-name">Mobile Payment</div>
-                        <div class="alt-method-desc">Venmo, Zelle, Cash App - ID: @merchant123</div>
+                        <div class="alt-method-name" data-en="Mobile Payment" data-hi="मोबाइल भुगतान">Mobile Payment</div>
+                        <div class="alt-method-desc" data-en="Venmo, Zelle, Cash App - ID: @merchant123" data-hi="Venmo, Zelle, Cash App - ID: @merchant123">Venmo, Zelle, Cash App - ID: @merchant123</div>
                     </div>
                 </div>
                 
                 <div class="alt-method">
                     <div class="alt-method-icon">💳</div>
                     <div class="alt-method-info">
-                        <div class="alt-method-name">Buy Now, Pay Later</div>
-                        <div class="alt-method-desc">Klarna, Afterpay, Sezzle - Split into 4 payments</div>
+                        <div class="alt-method-name" data-en="Buy Now, Pay Later" data-hi="अब खरीदें, बाद में भुगतान करें">Buy Now, Pay Later</div>
+                        <div class="alt-method-desc" data-en="Klarna, Afterpay, Sezzle - Split into 4 payments" data-hi="Klarna, Afterpay, Sezzle - 4 भुगतानों में विभाजित">Klarna, Afterpay, Sezzle - Split into 4 payments</div>
                     </div>
                 </div>
             </div>
@@ -530,6 +601,73 @@
     </div>
 
     <script>
+        // Initialize language and theme
+        function init() {
+            loadTheme();
+            loadLanguage();
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcon();
+        }
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon();
+        }
+
+        // Update theme toggle icon
+        function updateThemeToggleIcon() {
+            const themeToggle = document.querySelector('.theme-toggle');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        // Language toggle
+        function toggleLanguage() {
+            const currentLang = document.documentElement.getAttribute('data-lang') || 'en';
+            const newLang = currentLang === 'en' ? 'hi' : 'en';
+            document.documentElement.setAttribute('data-lang', newLang);
+            localStorage.setItem('language', newLang);
+            updateLanguage();
+            updateLangToggleIcon();
+        }
+
+        // Load language from localStorage
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.documentElement.setAttribute('data-lang', savedLang);
+            updateLanguage();
+            updateLangToggleIcon();
+        }
+
+        // Update language
+        function updateLanguage() {
+            const lang = document.documentElement.getAttribute('data-lang') || 'en';
+            document.querySelectorAll('[data-en][data-hi]').forEach(element => {
+                element.textContent = element.getAttribute(`data-${lang}`);
+                if (element.tagName === 'SELECT' || element.tagName === 'INPUT') {
+                    element.placeholder = element.getAttribute(`data-${lang}`) || element.placeholder;
+                }
+            });
+            // Update title
+            document.title = document.querySelector('title').getAttribute(`data-${lang}`);
+        }
+
+        // Update language toggle icon
+        function updateLangToggleIcon() {
+            const langToggle = document.querySelector('.lang-toggle');
+            const isHindi = document.documentElement.getAttribute('data-lang') === 'hi';
+            langToggle.textContent = isHindi ? '🇬🇧' : '🇮🇳';
+        }
+
         // Payment method selection
         document.querySelectorAll('.payment-option').forEach(option => {
             option.addEventListener('click', function() {
@@ -563,36 +701,48 @@
 
         // Process payment function
         function processPayment() {
+            const lang = document.documentElement.getAttribute('data-lang') || 'en';
             const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
             const transactionId = 'TXN-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
             
             // Simulate payment processing
             const button = document.querySelector('.payment-button');
-            button.innerHTML = '⏳ Processing Payment...';
+            button.innerHTML = lang === 'hi' ? '⏳ भुगतान संसाधित हो रहा है...' : '⏳ Processing Payment...';
             button.disabled = true;
             
             setTimeout(() => {
-                alert(`✅ Payment Successful!\n\nTransaction ID: ${transactionId}\nPayment Method: ${paymentMethod.toUpperCase()}\nAmount: $87.99\n\nThank you for your purchase!`);
-                button.innerHTML = '✅ Payment Complete';
-                button.style.background = '#10b981';
+                alert(lang === 'hi' ? 
+                    `✅ भुगतान सफल!\n\nलेनदेन ID: ${transactionId}\nभुगतान विधि: ${paymentMethod.toUpperCase()}\nराशि: $87.99\n\nआपकी खरीद के लिए धन्यवाद!` :
+                    `✅ Payment Successful!\n\nTransaction ID: ${transactionId}\nPayment Method: ${paymentMethod.toUpperCase()}\nAmount: $87.99\n\nThank you for your purchase!`);
+                button.innerHTML = lang === 'hi' ? '✅ भुगतान पूर्ण' : '✅ Payment Complete';
+                button.classList.add('success');
             }, 2000);
         }
 
         // Wallet button handlers
         document.querySelectorAll('.wallet-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                const method = this.textContent.trim();
-                alert(`Redirecting to ${method} for secure payment...`);
+                const lang = document.documentElement.getAttribute('data-lang') || 'en';
+                const method = this.querySelector('span[data-en][data-hi]').getAttribute(`data-${lang}`);
+                alert(lang === 'hi' ? 
+                    `सुरक्षित भुगतान के लिए ${method} पर पुनर्निर्देशित किया जा रहा है...` :
+                    `Redirecting to ${method} for secure payment...`);
             });
         });
 
         // Alternative method handlers
         document.querySelectorAll('.alt-method').forEach(method => {
             method.addEventListener('click', function() {
-                const methodName = this.querySelector('.alt-method-name').textContent;
-                alert(`Selected: ${methodName}\nPlease follow the instructions provided for this payment method.`);
+                const lang = document.documentElement.getAttribute('data-lang') || 'en';
+                const methodName = this.querySelector('.alt-method-name').getAttribute(`data-${lang}`);
+                alert(lang === 'hi' ? 
+                    `चयनित: ${methodName}\nकृपया इस भुगतान विधि के लिए दिए गए निर्देशों का पालन करें।` :
+                    `Selected: ${methodName}\nPlease follow the instructions provided for this payment method.`);
             });
         });
+
+        // Initialize
+        init();
     </script>
 </body>
 </html>

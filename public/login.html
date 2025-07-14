@@ -3,45 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
-
-  <!-- 💅 CSS Styling -->
+  <title>ASTIK Biometric Verification</title>
   <style>
+    :root {
+      --bg: #e0f7da;
+      --text: #1b1b1b;
+      --card-bg: #ffffff;
+      --card-text: #000;
+      --btn-bg: #0072ff;
+      --btn-hover: #005fc1;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #ffffff;
+      --card-bg: #1f1f1f;
+      --card-text: #ffffff;
+      --btn-bg: #00aaff;
+      --btn-hover: #007acc;
+    }
+
     * {
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      background: yellowgreen;
+      background: var(--bg);
+      color: var(--text);
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
     }
 
-    h1 {
-      color: white;
-      font-size: 2rem;
-      margin-bottom: 2rem;
+    header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      color: var(--text);
+    }
+
+    header p {
+      margin: 0.25rem 0;
+      font-size: 1rem;
+      color: var(--text);
     }
 
     form {
-      background-color: #fff;
+      background-color: var(--card-bg);
+      color: var(--card-text);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
-      min-width: 300px;
+      width: 100%;
+      max-width: 360px;
       gap: 1rem;
     }
 
     input[type="text"] {
-      padding: 0.8rem;
+      padding: 0.75rem;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -49,15 +80,15 @@
     }
 
     input:focus {
-      border-color: #0072ff;
+      border-color: var(--btn-bg);
       outline: none;
     }
 
     button {
-      padding: 0.8rem;
+      padding: 0.75rem;
       font-size: 1rem;
       color: #fff;
-      background-color: #0072ff;
+      background-color: var(--btn-bg);
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -65,64 +96,167 @@
     }
 
     button:hover {
-      background-color: #005fc1;
+      background-color: var(--btn-hover);
+    }
+
+    .top-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .top-controls button {
+      background: none;
+      border: 1px solid var(--text);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    #spinner {
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
     }
 
     @media (max-width: 400px) {
       form {
         width: 90%;
+        padding: 1.5rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 👤 Login Form -->
+  <!-- 🔘 Theme & Language Toggles -->
+  <div class="top-controls">
+    <button id="toggleTheme">🌙 Dark</button>
+    <button id="toggleLang">🌐 हिंदी</button>
+  </div>
+
+  <!-- 🏷️ Title -->
+  <header>
+    <h1 id="title">ASTIK Biometric Verification</h1>
+    <p id="sub1">1. Login with Passkey</p>
+    <p id="sub2">2. Secure and Easy</p>
+  </header>
+
+  <!-- 🔐 Login Form -->
   <form id="login-form">
-    <input type="text" placeholder="Enter your User ID" id="userId" required />
-    <button type="submit">Login with Passkey</button>
+    <input type="text" id="userId" placeholder="Enter your User ID" required />
+    <button type="submit" id="loginBtn">Login with Passkey</button>
+    <div id="spinner">🔐 Authenticating...</div>
   </form>
 
-  <!-- 🔐 SimpleWebAuthn -->
+  <!-- 📦 Passkey SDK -->
   <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
   <script>
     const form = document.getElementById('login-form');
     const userIdField = document.getElementById('userId');
+    const loginBtn = document.getElementById('loginBtn');
+    const spinner = document.getElementById('spinner');
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      loginBtn.disabled = true;
+      spinner.style.display = 'block';
       const userId = userIdField.value;
 
-      const response = await fetch('/login-challenge', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId })
-      });
+      try {
+        const res = await fetch('/login-challenge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+        const { options } = await res.json();
+        const cred = await SimpleWebAuthnBrowser.startAuthentication(options);
 
-      const challengeResult = await response.json();
-      const { options } = challengeResult;
+        const verifyRes = await fetch('/login-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, cred })
+        });
 
-      const authenticationResult = await SimpleWebAuthnBrowser.startAuthentication(options);
-      console.log(authenticationResult);
-
-      const verifyResponse = await fetch('/login-verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId, cred: authenticationResult })
-      });
-
-      const verifyResult = await verifyResponse.json();
-      if (verifyResult.success === true) {
-        alert('Login successful');
-        window.location.href = `/payment.html`;
-      } else {
-        alert('Login failed');
+        const result = await verifyRes.json();
+        if (result.success) {
+          alert('Login successful');
+          window.location.href = '/payment.html';
+        } else {
+          alert('Login failed');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred during login.');
+      } finally {
+        loginBtn.disabled = false;
+        spinner.style.display = 'none';
       }
     });
+
+    // 🌗 Theme Toggle
+    const themeBtn = document.getElementById('toggleTheme');
+    themeBtn.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme') || 'light';
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', newTheme);
+      themeBtn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      localStorage.setItem('theme', newTheme);
+    });
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    themeBtn.textContent = savedTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+
+    // 🌐 Language Toggle
+    const langBtn = document.getElementById('toggleLang');
+    const textMap = {
+      en: {
+        title: "ASTIK Biometric Verification",
+        sub1: "1. Login with Passkey",
+        sub2: "2. Secure and Easy",
+        placeholder: "Enter your User ID",
+        button: "Login with Passkey",
+        spinner: "🔐 Authenticating...",
+        langBtn: "🌐 हिंदी"
+      },
+      hi: {
+        title: "आस्तिक बायोमेट्रिक सत्यापन",
+        sub1: "1. पासकी से लॉगिन करें",
+        sub2: "2. सुरक्षित और आसान",
+        placeholder: "अपना यूज़र आईडी दर्ज करें",
+        button: "पासकी से लॉगिन करें",
+        spinner: "🔐 प्रमाणीकरण हो रहा है...",
+        langBtn: "🌐 English"
+      }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'en';
+    function updateLang(lang) {
+      const t = textMap[lang];
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('sub1').textContent = t.sub1;
+      document.getElementById('sub2').textContent = t.sub2;
+      document.getElementById('userId').placeholder = t.placeholder;
+      document.getElementById('loginBtn').textContent = t.button;
+      document.getElementById('spinner').textContent = t.spinner;
+      langBtn.textContent = t.langBtn;
+      localStorage.setItem('lang', lang);
+    }
+
+    langBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'en' ? 'hi' : 'en';
+      updateLang(currentLang);
+    });
+
+    updateLang(currentLang);
   </script>
 </body>
 </html>

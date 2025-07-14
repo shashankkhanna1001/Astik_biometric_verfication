@@ -3,101 +3,288 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile Page</title>
-
+  <title>Astik Biometric Verification</title>
   <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, yellowgreen, #6ea24f);
+      --form-bg: #fff;
+      --text-color: #000;
+      --btn-bg: #0072ff;
+      --btn-hover: #005fc1;
+      --badge-ok: #4caf50;
+      --badge-fail: #f44336;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      --form-bg: #2e2e2e;
+      --text-color: #fff;
+      --btn-bg: #00aaff;
+      --btn-hover: #007acc;
+    }
+
     * {
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      background: yellowgreen;
+      background: url('background.jpg') center/cover no-repeat fixed, var(--bg-gradient);
       height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      color: var(--text-color);
+      transition: background 0.4s ease;
+    }
+
+    .top-right-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .theme-toggle,
+    .lang-toggle {
+      background: none;
       color: white;
+      border: 2px solid white;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
     .profile-container {
-      background-color: white;
-      color: black;
+      background-color: var(--form-bg);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
       text-align: center;
-      min-width: 300px;
+      width: 100%;
+      max-width: 420px;
     }
 
     h1 {
       margin-bottom: 1rem;
+      font-size: 1.5rem;
     }
 
-    button {
-      padding: 0.8rem 1.5rem;
+    #greeting {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--btn-bg);
+      margin-bottom: 0.7rem;
+    }
+
+    input[type="file"] {
+      margin: 0.5rem 0 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.8rem;
+      border-radius: 50px;
+      margin-top: 0.5rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .registered {
+      background-color: var(--badge-ok);
+    }
+
+    .not-registered {
+      background-color: var(--badge-fail);
+    }
+
+    button, select {
+      padding: 0.8rem 1rem;
       font-size: 1rem;
       color: #fff;
-      background-color: #0072ff;
+      background-color: var(--btn-bg);
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 1.5rem;
+      transition: background-color 0.3s ease;
+      margin-top: 0.8rem;
     }
 
-    button:hover {
-      background-color: #005fc1;
+    button:hover:not(:disabled),
+    select:hover {
+      background-color: var(--btn-hover);
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    #spinner {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: gray;
+      display: none;
+    }
+
+    a {
+      display: block;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: var(--btn-bg);
+      font-weight: bold;
+    }
+
+    @media (max-width: 400px) {
+      .profile-container {
+        padding: 1.5rem;
+      }
+
+      .top-right-controls {
+        flex-direction: column;
+        right: 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="profile-container">
-    <h1>Welcome to Your Profile</h1>
-    <button id="register-passkey-button">Register Fingerprint</button>
+  <!-- Top-right toggle buttons -->
+  <div class="top-right-controls">
+    <button class="lang-toggle" id="toggleLang">🌐 हिंदी</button>
+    <button class="theme-toggle" id="toggleTheme">🌙 Dark Mode</button>
   </div>
 
-  <a href="/shop.html">Enter the shop Page</a>
+  <!-- Main profile section -->
+  <div class="profile-container">
+    <h1 id="title">Astik Biometric Verification</h1>
+    <p id="greeting">Welcome back!</p>
+    
+    <img src="default-avatar.png" id="avatar" class="profile-pic" alt="Profile Picture">
+    <input type="file" accept="image/*" id="picUpload">
 
+    <div id="userDetails"></div>
+    <div id="statusBadge" class="badge">Checking...</div>
+
+    <button id="register-passkey-button">Register Fingerprint</button>
+    <div id="spinner">🔐 Registering passkey...</div>
+
+    <a href="/shop.html" id="shopLink">→ Enter the Shop Page</a>
+  </div>
+
+  <!-- SimpleWebAuthn & logic -->
   <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
   <script>
-    const registerPasskeyBtn = document.getElementById('register-passkey-button');
+    const registerBtn = document.getElementById('register-passkey-button');
+    const spinner = document.getElementById('spinner');
+    const greeting = document.getElementById('greeting');
+    const statusBadge = document.getElementById('statusBadge');
+    const userDetails = document.getElementById('userDetails');
+    const avatar = document.getElementById('avatar');
+    const picUpload = document.getElementById('picUpload');
+    const shopLink = document.getElementById('shopLink');
+    const toggleThemeBtn = document.getElementById('toggleTheme');
+    const toggleLangBtn = document.getElementById('toggleLang');
+    const title = document.getElementById('title');
 
-    registerPasskeyBtn.addEventListener('click', async () => {
-      const url = new URL(window.location);
-      const userId = url.searchParams.get('userId');
+    const url = new URL(window.location);
+    const userId = url.searchParams.get('userId') || 'unknown';
+    const username = url.searchParams.get('username') || 'User';
 
-      if (!userId) {
-        alert("User ID missing in URL");
-        return;
-      }
+    greeting.textContent = `Welcome back, ${username}!`;
+    userDetails.innerHTML = `<strong>User ID:</strong> ${userId}`;
 
-      const response = await fetch('/register-challenge', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId })
-      });
-
-      const challengeResult = await response.json();
-      const { options } = challengeResult;
-
-      const registrationResult = await SimpleWebAuthnBrowser.startRegistration(options);
-      console.log(registrationResult);
-
-      await fetch('/register-verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId, cred: registrationResult })
-      });
+    picUpload.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) avatar.src = URL.createObjectURL(file);
     });
+
+    registerBtn.addEventListener('click', async () => {
+      try {
+        registerBtn.disabled = true;
+        spinner.style.display = 'block';
+
+        const challengeResp = await fetch('/register-challenge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+
+        const { options } = await challengeResp.json();
+        const registration = await SimpleWebAuthnBrowser.startRegistration(options);
+
+        await fetch('/register-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, cred: registration })
+        });
+
+        alert('Fingerprint registered successfully!');
+        checkStatus();
+      } catch (err) {
+        console.error(err);
+        alert('Registration failed.');
+      } finally {
+        spinner.style.display = 'none';
+        registerBtn.disabled = false;
+      }
+    });
+
+    async function checkStatus() {
+      try {
+        const res = await fetch(`/status?userId=${userId}`);
+        const data = await res.json();
+        if (data?.registered) {
+          statusBadge.textContent = '✅ Registered';
+          statusBadge.className = 'badge registered';
+        } else {
+          statusBadge.textContent = '❌ Not Registered';
+          statusBadge.className = 'badge not-registered';
+        }
+      } catch {
+        statusBadge.textContent = '⚠️ Error';
+        statusBadge.className = 'badge not-registered';
+      }
+    }
+
+    function applyTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      toggleThemeBtn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('theme', theme);
+    }
+
+    toggleThemeBtn.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    applyTheme(localStorage.getItem('theme') || 'light');
+
+    toggleLangBtn.addEventListener('click', () => {
+      const isHindi = toggleLangBtn.textContent.includes('English');
+      title.textContent = isHindi ? 'Astik Biometric Verification' : 'आस्तिक बायोमेट्रिक सत्यापन';
+      greeting.textContent = isHindi ? `Welcome back, ${username}!` : `वापसी पर स्वागत है, ${username} जी!`;
+      registerBtn.textContent = isHindi ? 'Register Fingerprint' : 'उंगली चिन्ह पंजीकरण';
+      shopLink.textContent = isHindi ? '→ Enter the Shop Page' : '→ दुकान पेज पर जाएं';
+      userDetails.innerHTML = `<strong>${isHindi ? 'User ID' : 'यूज़र आईडी'}:</strong> ${userId}`;
+      toggleLangBtn.textContent = isHindi ? '🌐 हिंदी' : '🌐 English';
+    });
+
+    checkStatus();
   </script>
 </body>
 </html>
