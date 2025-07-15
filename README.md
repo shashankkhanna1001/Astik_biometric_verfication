@@ -111,5 +111,5 @@ Submit a pull request
 
 📧 Contact
 Shashank Khanna
-📫 Email: [your-email@example.com]
+📫 Email: shashankkhanna98@gmail.com
 🔗 GitHub: @shashankkhanna1001
