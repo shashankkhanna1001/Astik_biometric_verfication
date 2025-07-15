@@ -87,8 +87,6 @@ Sessions/tokens protected against common vulnerabilities (CSRF, XSS, etc.)
 
  Admin dashboard for verification stats
 
-📜 License
-MIT License (or specify your own)
 
 🤝 Contributing
 Contributions, bug reports, and feature requests are welcome!
