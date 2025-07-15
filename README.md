@@ -10,13 +10,7 @@ Astik Biometric Verification is a secure web-based authentication platform that 
 - ✅ **Fingerprint Registration Status Badge**
 - 🌐 **Multi-language Support (English & Hindi)**
 - 📱 **Mobile-Optimized UI**
-- 🧩 **Modular Codebase** for easy extension
-
-## 📸 Screenshots
-
-| Signup Page | Profile Page |
-|-------------|--------------|
-| ![signup](screenshots/signup.png) | ![profile](screenshots/profile.png) |
+- 🧩 **Modular Codebase** for easy extension|
 
 ## 🧑‍💻 Tech Stack
 
